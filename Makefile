@@ -13,4 +13,4 @@ deploy:
 	@gcloud builds submit --substitutions=_REGION=$REGION
 
 test:
-	@pytest tests
+	@pytest .
