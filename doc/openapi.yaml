@@ -3,6 +3,9 @@ info:
   version: 1.0.0
   title: Python Service for Cloud Run API
   description: This is a sample OpenAPI spec for the template Python Service gor Google Cloud Run
+servers:
+  - url: http://localhost:8080
+    description: Local testing server
 paths:
   /:
     get:
