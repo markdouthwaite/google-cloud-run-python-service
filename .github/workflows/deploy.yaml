@@ -5,6 +5,14 @@ on:
     branches:
       - main
 jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - uses: pre-commit/action@v2.0.3
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -12,7 +20,7 @@ jobs:
       matrix:
         python-version: [ "3.9", "3.10" ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
@@ -20,4 +28,4 @@ jobs:
       - name: Install dependencies
         run: make install-dev
       - name: Run tests
-        run: make test
+        run: pytest .
