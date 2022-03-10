@@ -1,0 +1,12 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Python Service for Cloud Run API
+  description: This is a sample OpenAPI spec for the template Python Service gor Google Cloud Run
+paths:
+  /:
+    get:
+      description: Returns 'ok' if everything is looking good
+      responses:
+        '200':
+          description: Successful response

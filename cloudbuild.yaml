@@ -1,0 +1,11 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: ['-c', 'docker build -t gcr.io/$PROJECT_ID/python-service --build-arg PROJECT_ID=$PROJECT_ID .']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/python-service']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'python-service', '--image', 'gcr.io/$PROJECT_ID/python-service', '--platform', 'managed', '--region', '$LOCATION']
+images:
+  - 'gcr.io/$PROJECT_ID/python-service'
