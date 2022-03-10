@@ -10,7 +10,7 @@ develop: install-dev
 	@python main.py --reload
 
 deploy:
-	@gcloud builds submit
+	@gcloud builds submit --substitutions=_REGION=$REGION
 
 test:
 	@pytest tests
