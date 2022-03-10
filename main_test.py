@@ -1,3 +1,3 @@
-def test_index(client):
-    response = client.get("/")
+def test_ping(client):
+    response = client.get("/ping")
     assert response.data == b"ok"

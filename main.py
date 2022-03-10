@@ -2,11 +2,14 @@ import os
 
 from flask import Flask
 
+from src import index
+
 app = Flask(__name__)
+app.register_blueprint(index)
 
 
-@app.get("/")
-def index():
+@app.get("/ping")
+def ping():
     return "ok"
 
 
