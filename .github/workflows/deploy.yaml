@@ -1,20 +1,22 @@
-name: Deploy
+name: 'Deploy'
 
 on:
   pull_request:
     branches:
-      - main
+      - 'main'
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: 'ubuntu-latest'
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup GCP client
-        uses: google-github-actions/setup-gcloud@v0
+      - uses: 'actions/checkout@v3'
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-      - name: Deploy to GCP
-        run: make deploy
+          workload_identity_provider: '${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'
+          service_account: '${{secrets.SERVICE_ACCOUNT}}'
+      - name: 'Setup GCP client'
+        uses: 'google-github-actions/setup-gcloud@v0'
+      - name: 'Deploy to GCP'
+        run: 'make deploy'
