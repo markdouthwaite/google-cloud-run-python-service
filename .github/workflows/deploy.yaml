@@ -21,4 +21,4 @@ jobs:
       - name: 'Setup GCP client'
         uses: 'google-github-actions/setup-gcloud@v0'
       - name: 'Deploy to GCP'
-        run: 'make deploy'
+        run: 'gcloud builds submit --substitutions=_REGION=europe-west1'
