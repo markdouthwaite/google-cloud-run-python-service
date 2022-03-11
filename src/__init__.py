@@ -1,3 +1,1 @@
-from .index import index
-
-__all__ = ["index"]
+# home of application code
