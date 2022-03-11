@@ -1,9 +1,15 @@
-name: 'Deploy'
+name: 'Build and deploy'
 
 on:
   pull_request:
     branches:
       - 'main'
+
+env:
+  PROJECT_ID: '${{ secrets.PROJECT_ID }}'
+  SERVICE: 'python-service'
+  REGION: 'europe-west1'
+
 jobs:
   deploy:
     runs-on: 'ubuntu-latest'
@@ -20,5 +26,18 @@ jobs:
           service_account: '${{secrets.SERVICE_ACCOUNT}}'
       - name: 'Setup GCP client'
         uses: 'google-github-actions/setup-gcloud@v0'
-      - name: 'Deploy to GCP'
-        run: 'gcloud builds submit --substitutions=_REGION=europe-west1'
+        with:
+          project_id: '${{ env.PROJECT_ID }}'
+      - name: 'Authorize Docker push'
+        run: 'gcloud auth configure-docker'
+      - name: 'Build and Push Container'
+        run: |-
+          docker build -t gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }} example-app/
+          docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }}
+      - name: 'Deploy to Cloud Run'
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: ${{ env.SERVICE }}
+          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }}
+          region: ${{ env.REGION }}
