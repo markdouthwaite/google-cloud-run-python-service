@@ -1,14 +1,44 @@
-name: Deploy
+name: 'Build and deploy'
 
 on:
   push:
     branches:
-      - main
+      - 'main'
+
+env:
+  PROJECT_ID: '${{ secrets.PROJECT_ID }}'
+  SERVICE_ACCOUNT: '${{secrets.SERVICE_ACCOUNT}}'
+  SERVICE: 'python-service'
+  REGION: 'europe-west1'
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: 'ubuntu-latest'
     timeout-minutes: 10
-
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
-      - name: Deploy to GCP
-        run: echo 'hello, world!'
+      - uses: 'actions/checkout@v3'
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          workload_identity_provider: '${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'
+          service_account: '${{env.SERVICE_ACCOUNT}}'
+      - name: 'Setup GCP client'
+        uses: 'google-github-actions/setup-gcloud@v0'
+        with:
+          project_id: '${{ env.PROJECT_ID }}'
+      - name: 'Authorize Docker push'
+        run: 'gcloud auth configure-docker'
+      - name: 'Build and Push Container'
+        run: |-
+          docker build -t gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }} .
+          docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }}
+      - name: 'Deploy to Cloud Run'
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: ${{ env.SERVICE }}
+          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }}
+          region: ${{ env.REGION }}
