@@ -7,6 +7,7 @@ on:
 
 env:
   PROJECT_ID: '${{ secrets.PROJECT_ID }}'
+  SERVICE_ACCOUNT: '${{secrets.SERVICE_ACCOUNT}}'
   SERVICE: 'python-service'
   REGION: 'europe-west1'
 
@@ -23,7 +24,7 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           workload_identity_provider: '${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'
-          service_account: '${{secrets.SERVICE_ACCOUNT}}'
+          service_account: '${{env.SERVICE_ACCOUNT}}'
       - name: 'Setup GCP client'
         uses: 'google-github-actions/setup-gcloud@v0'
         with:
@@ -32,7 +33,7 @@ jobs:
         run: 'gcloud auth configure-docker'
       - name: 'Build and Push Container'
         run: |-
-          docker build -t gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }} example-app/
+          docker build -t gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }} .
           docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }}
       - name: 'Deploy to Cloud Run'
         id: deploy
