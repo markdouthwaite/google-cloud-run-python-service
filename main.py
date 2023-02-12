@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 
 @app.get("/")
-def hello_world():
+def index():
     return "hello, world!"
 
 
