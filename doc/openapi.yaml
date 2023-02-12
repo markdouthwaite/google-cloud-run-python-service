@@ -9,6 +9,12 @@ servers:
 paths:
   /:
     get:
+      description: Returns 'hello, world!' if everything is looking good
+      responses:
+        '200':
+          description: Successful response
+  /ping:
+    get:
       description: Returns 'ok' if everything is looking good
       responses:
         '200':
