@@ -6,10 +6,11 @@ on:
       - 'main'
 
 env:
-  PROJECT_ID: '${{ secrets.PROJECT_ID }}'
-  SERVICE_ACCOUNT: '${{secrets.SERVICE_ACCOUNT}}'
-  SERVICE: 'python-service'
-  REGION: 'europe-west1'
+  SERVICE_NAME: 'python-service'
+  PROJECT_ID: '${{ secrets.DEV_GCP_PROJECT_ID }}'
+  SERVICE_ACCOUNT: '${{secrets.DEV_GCP_SERVICE_ACCOUNT}}'
+  REGION: '${{secrets.PROD_GCP_REGION}}'
+  WORKLOAD_IDENTITY_PROVIDER: '${{secrets.DEV_GCP_WORKLOAD_IDENTITY_PROVIDER}}'
 
 jobs:
   deploy:
@@ -23,7 +24,7 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v0'
         with:
-          workload_identity_provider: '${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'
+          workload_identity_provider: '${{env.WORKLOAD_IDENTITY_PROVIDER}}'
           service_account: '${{env.SERVICE_ACCOUNT}}'
       - name: 'Setup GCP client'
         uses: 'google-github-actions/setup-gcloud@v0'
